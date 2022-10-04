@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { createUser } from '../services/userAPI';
+
 import Loading from './compoents/Loading';
 
 class Login extends Component {
@@ -39,6 +40,7 @@ class Login extends Component {
     this.setState({ isLoading: true });
     await createUser({ name: inputName });
     history.push('/search');
+    this.setState({ isLoading: false });
   };
 
   render() {
