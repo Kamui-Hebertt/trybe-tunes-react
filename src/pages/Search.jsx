@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Header from './compoents/Header';
-// import searchAlbumsAPI from '../services/searchAlbumsAPI';
+import searchAlbumsAPI from '../services/searchAlbumsAPI';
+import Loading from './compoents/Loading';
 
 class Search extends Component {
   constructor() {
@@ -8,6 +10,10 @@ class Search extends Component {
     this.state = {
       nameBoA: '',
       lockedBtn: true,
+      isLoading: false,
+      artist: '',
+      album: [],
+      clickedBtn: false,
     };
   }
 
@@ -25,25 +31,71 @@ class Search extends Component {
     } else { this.setState({ lockedBtn: true }); }
   };
 
+  findingTheResult = async () => {
+    this.setState({ clickedBtn: true });
+    const { nameBoA } = this.state;
+    this.setState({ isLoading: true });
+    const request = await searchAlbumsAPI(nameBoA);
+
+    this.setState({ isLoading: false, album: request, artist: nameBoA });
+    this.setState({ nameBoA: '' });
+  };
+
   render() {
-    const { nameBoA, lockedBtn } = this.state;
+    const { nameBoA, lockedBtn, isLoading, album, artist, clickedBtn } = this.state;
     return (
       <div data-testid="page-search">
         <Header />
-        <input
-          type="text"
-          placeholder="insira o nome da banda ou artista"
-          data-testid="search-artist-input"
-          onChange={ this.typing }
-          value={ nameBoA }
-        />
-        <button
-          type="button"
-          data-testid="search-artist-button"
-          disabled={ lockedBtn }
-        >
-          Pesquisar
-        </button>
+        {isLoading ? <Loading /> : (
+          <>
+            <input
+              type="text"
+              placeholder="insira o nome da banda ou artista"
+              data-testid="search-artist-input"
+              onChange={ this.typing }
+              value={ nameBoA }
+            />
+            <button
+              type="button"
+              data-testid="search-artist-button"
+              disabled={ lockedBtn }
+              onClick={ this.findingTheResult }
+            >
+              Pesquisar
+            </button>
+
+          </>
+
+        )}
+        {clickedBtn && (
+          <p>
+            Resultado de álbuns de:
+            {' '}
+            {artist}
+          </p>
+
+        )}
+
+        {album.length > 0 && (album.map((elementAlbum) => (
+
+          <Link
+            data-testid={ `link-to-album-${elementAlbum.collectionId}` }
+            key={ elementAlbum.artistId }
+            to={ `/album/${elementAlbum.collectionId}` }
+          >
+            <div>
+              {elementAlbum.collectionName}
+              <img
+                src={ elementAlbum.artworkUrl100 }
+                alt={ elementAlbum.collectionName }
+              />
+
+            </div>
+
+          </Link>
+
+        ))) }
+        {(album.length > 0) || (<p>Nenhum álbum foi encontrado</p>)}
 
       </div>
     );
