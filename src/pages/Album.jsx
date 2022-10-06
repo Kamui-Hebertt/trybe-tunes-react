@@ -28,10 +28,12 @@ class Album extends Component {
     const onlyRealTracks = musicsResponse.filter((ElementTracks) => ElementTracks.kind
     === 'song');
     console.log(onlyRealTracks);
-
+    const onlyTrackId = onlyRealTracks.map((elementTrack) => elementTrack.trackId);
+    console.log(onlyTrackId);
     this.setState({ music: onlyRealTracks,
       dataInfoAlbum: musicsResponse[0],
-      isLoading: false });
+      isLoading: false,
+    });
   };
 
   render() {
@@ -56,6 +58,7 @@ class Album extends Component {
                     trackName={ elementTracks.trackName }
                     key={ index }
                     previewUrl={ elementTracks.previewUrl }
+                    trackId={ elementTracks.trackId }
                   />
                 ))}
               </div>
