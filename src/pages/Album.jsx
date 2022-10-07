@@ -59,6 +59,7 @@ class Album extends Component {
                     key={ index }
                     previewUrl={ elementTracks.previewUrl }
                     trackId={ elementTracks.trackId }
+                    anyprop={ elementTracks }
                   />
                 ))}
               </div>

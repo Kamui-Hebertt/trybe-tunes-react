@@ -20,10 +20,11 @@ class MusicCard extends Component {
   }
 
   gettingTheSongs = async () => {
-    const { trackId } = this.props;
+    const { anyprop } = this.props;
     const request = await getFavoriteSongs();
     const checkTheLocalStorageToVerify = request
-      .find((elementTrack) => elementTrack.trackId === trackId);
+
+      .some((elementTrack) => elementTrack.trackId === anyprop.trackId);
     console.log(checkTheLocalStorageToVerify);
     if (checkTheLocalStorageToVerify) {
       this.setState({ isChecked: true });
@@ -32,12 +33,14 @@ class MusicCard extends Component {
 
   addingFavoritesSongs = (event) => {
     const { isChecked } = this.state;
+    const { anyprop } = this.props;
     if (!isChecked) { this.setState({ isChecked: true }); }
+    if (isChecked) { this.setState({ isChecked: false }); }
     const { value } = event.target;
     this.setState({ isLoading: true });
     console.log(value);
-    addSong(value)
-      .then(() => this.setState((prev) => ({ favorites: [...prev.favorites, value],
+    addSong(anyprop)
+      .then(() => this.setState((prev) => ({ favorites: [...prev.favorites, anyprop],
         isLoading: false })));
   };
 
@@ -76,7 +79,7 @@ class MusicCard extends Component {
 }
 MusicCard.propTypes = {
   trackName: PropTypes.string.isRequired,
-
+  anyprop: PropTypes.string.isRequired,
   previewUrl: PropTypes.string.isRequired,
   trackId: PropTypes.string.isRequired,
 };
