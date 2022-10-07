@@ -24,7 +24,7 @@ class MusicCard extends Component {
     const request = await getFavoriteSongs();
     const checkTheLocalStorageToVerify = request
       .find((elementTrack) => elementTrack.trackId === trackId);
-      console.log(checkTheLocalStorageToVerify);
+    console.log(checkTheLocalStorageToVerify);
     if (checkTheLocalStorageToVerify) {
       this.setState({ isChecked: true });
     }
