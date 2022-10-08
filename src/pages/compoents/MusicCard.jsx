@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import Loading from './Loading';
 // import getFavoriteSongs, ;
-import { addSong, getFavoriteSongs } from '../../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs, removeSong } from '../../services/favoriteSongsAPI';
 
 class MusicCard extends Component {
   constructor() {
@@ -25,20 +25,25 @@ class MusicCard extends Component {
     const checkTheLocalStorageToVerify = request
 
       .some((elementTrack) => elementTrack.trackId === anyprop.trackId);
-    console.log(checkTheLocalStorageToVerify);
+    // console.log(checkTheLocalStorageToVerify);
     if (checkTheLocalStorageToVerify) {
       this.setState({ isChecked: true });
     }
   };
 
-  addingFavoritesSongs = (event) => {
-    const { isChecked } = this.state;
+  addingFavoritesSongs = () => {
+    const { isChecked, favorites } = this.state;
     const { anyprop } = this.props;
     if (!isChecked) { this.setState({ isChecked: true }); }
     if (isChecked) { this.setState({ isChecked: false }); }
-    const { value } = event.target;
     this.setState({ isLoading: true });
-    console.log(value);
+
+    if (isChecked) {
+      const remove = favorites.filter((s) => s.trackId !== anyprop.trackId);
+      removeSong(anyprop)
+        .then(() => this.setState({ favorites: [remove], isLoading: false }));
+    }
+
     addSong(anyprop)
       .then(() => this.setState((prev) => ({ favorites: [...prev.favorites, anyprop],
         isLoading: false })));
@@ -78,9 +83,9 @@ class MusicCard extends Component {
   }
 }
 MusicCard.propTypes = {
-  trackName: PropTypes.string.isRequired,
-  anyprop: PropTypes.string.isRequired,
-  previewUrl: PropTypes.string.isRequired,
-  trackId: PropTypes.string.isRequired,
-};
+  trackName: PropTypes.string,
+  anyprop: PropTypes.string,
+  previewUrl: PropTypes.string,
+  trackId: PropTypes.string,
+}.isRequired;
 export default MusicCard;
